@@ -34,11 +34,25 @@ generate_parameter_library(pointcloud_crop_box_params
 add_library(pointcloud_crop_box_node_component SHARED
             src/pointcloud_crop_box_node.cpp)
 
-ament_target_dependencies(pointcloud_crop_box_node_component
-                          ${PACKAGE_DEPENDENCIES})
-
-target_link_libraries(pointcloud_crop_box_node_component ${PCL_LIBRARIES}
-                      pointcloud_crop_box_params)
+# ament_target_dependencies() was removed in ament_cmake 2.8 (ROS 2 Lyrical); link the
+# modern per-package ${<pkg>_TARGETS} variables instead. generate_parameter_library is a
+# build-tool macro package with no exported targets - its generated
+# pointcloud_crop_box_params target below carries what is needed.
+target_link_libraries(
+  pointcloud_crop_box_node_component
+  PUBLIC ${laser_geometry_TARGETS}
+         ${pcl_conversions_TARGETS}
+         ${pcl_ros_TARGETS}
+         ${rclcpp_TARGETS}
+         ${rclcpp_components_TARGETS}
+         ${sensor_msgs_TARGETS}
+         ${tf2_TARGETS}
+         ${tf2_geometry_msgs_TARGETS}
+         ${tf2_ros_TARGETS}
+         ${tf2_sensor_msgs_TARGETS}
+         ${visualization_msgs_TARGETS}
+         ${PCL_LIBRARIES}
+         pointcloud_crop_box_params)
 target_include_directories(
   pointcloud_crop_box_node_component
   PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>)
